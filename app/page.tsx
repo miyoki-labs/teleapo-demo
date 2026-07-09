@@ -99,7 +99,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         <div>
           <h1 className="text-lg font-semibold text-gray-900">
             テレアポ 切り返しAIアシスタント
@@ -108,7 +108,7 @@ export default function Home() {
             断り文句を入力すると、最適な切り返しトークを提案します
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {DEMO_MODE && (
             <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full font-medium">
               公開デモ（回答は固定応答）
@@ -120,14 +120,16 @@ export default function Home() {
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden max-w-5xl w-full mx-auto gap-0">
+      {/* スマホ: 縦積み（プロファイル→チャット）／md以上: 左サイドバー＋右チャット */}
+      <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-y-auto md:overflow-hidden max-w-5xl w-full mx-auto gap-0">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col gap-5 overflow-y-auto shrink-0">
+        <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200 p-4 flex flex-col gap-5 md:overflow-y-auto shrink-0">
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
               顧客プロファイル
             </p>
-            <div className="flex flex-col gap-3">
+            {/* スマホは横3列に畳んで縦の占有を減らす */}
+            <div className="grid grid-cols-3 gap-3 md:flex md:flex-col">
               <div>
                 <label className="text-xs text-gray-600 mb-1 block">年代</label>
                 <select
@@ -165,7 +167,8 @@ export default function Home() {
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
               よくある断り文句
             </p>
-            <div className="flex flex-col gap-2">
+            {/* スマホは折り返しのチップ、md以上は縦積み */}
+            <div className="flex flex-row flex-wrap md:flex-col gap-2">
               {QUICK_PHRASES.map((phrase) => (
                 <button
                   key={phrase}
@@ -190,8 +193,8 @@ export default function Home() {
         </aside>
 
         {/* Chat area */}
-        <main className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-4">
+        <main className="flex-1 flex flex-col min-h-0 md:overflow-hidden">
+          <div className="flex-1 md:overflow-y-auto px-4 md:px-6 py-4 md:py-6 flex flex-col gap-4">
             {messages.length === 0 && (
               <div className="flex-1 flex flex-col items-center justify-center text-center gap-4 text-gray-400">
                 <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-3xl">

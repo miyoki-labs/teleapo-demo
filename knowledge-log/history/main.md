@@ -30,3 +30,17 @@
 **検証**：`tsc --noEmit` → `NEXT_PUBLIC_DEMO_MODE=1 next build` → `next start` で実機確認。「もう他の業者に頼みました」でおすすめトーク＋もう一手が1文字ずつ流れることを目視。
 
 **残り**：デプロイ時に `NEXT_PUBLIC_DEMO_MODE=1` をビルド前の環境変数に設定する。
+
+## 2026-07-09（Phase 2：レスポンシブ対応）
+
+`sm:`/`md:` の指定が**ゼロ**で、サイドバー `w-64` 固定＋横並び flex のため、スマホでは確実に破綻する状態だった（`計画\04_ポートフォリオ計画.md` Phase 2-5）。
+
+- コンテナ: `flex` → `flex flex-col md:flex-row`（スマホは縦積み）。`overflow-hidden` → `min-h-0 overflow-y-auto md:overflow-hidden`（縦積み時にページ全体でスクロールさせる）
+- サイドバー: `w-64` → `w-full md:w-64`、境界線を `border-r` → `border-b md:border-b-0 md:border-r`
+- 顧客プロファイルの3つのselect: スマホは `grid grid-cols-3` に畳んで縦の占有を削減
+- 断り文句のボタン: スマホは `flex-wrap` のチップ、md以上は縦積み
+- ヘッダー: `px-6 py-4` → `px-4 md:px-6 py-3 md:py-4`、バッジは `flex-wrap`
+- チャット領域: `px-6 py-6` → `px-4 md:px-6 py-4 md:py-6`、`min-h-0` を追加
+
+**検証**：`tsc --noEmit` → `next build` → `next start` でデスクトップ表示が崩れていないことを確認。
+⚠️ **スマホ幅の目視は未実施**。ブラウザ自動化の `resize_window` ではviewportが変わらず検証できなかった。**実機確認は週末PCバッチへ**。
