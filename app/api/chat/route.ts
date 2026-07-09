@@ -1,7 +1,27 @@
 import { NextRequest } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { DEMO_MODE, SAMPLE_ANSWERS, DEMO_FALLBACK } from "@/lib/demo";
 
-const client = new Anthropic();
+// デモモードではAPIキーを持たないため、モジュール読み込み時に生成しない（遅延生成）
+let _client: Anthropic | null = null;
+function getClient() {
+  if (!_client) _client = new Anthropic();
+  return _client;
+}
+
+/** 固定応答を、LLMのストリームと同じ体感で1文字ずつ流す */
+function cannedStream(text: string) {
+  const encoder = new TextEncoder();
+  return new ReadableStream({
+    async start(controller) {
+      for (const char of text) {
+        await new Promise((r) => setTimeout(r, 12));
+        controller.enqueue(encoder.encode(char));
+      }
+      controller.close();
+    },
+  });
+}
 
 const SYSTEM_PROMPT = `あなたは引越しテレアポの超ベテランオペレーターです。
 10年以上の経験があり、どんな断り文句にも的確な切り返しができます。
@@ -59,6 +79,17 @@ export async function POST(req: NextRequest) {
   try {
     const { messages, profile } = await req.json();
 
+    // デモモード: LLMを呼ばず、事前生成の切り返しトークを再生する（APIコスト0）
+    if (DEMO_MODE) {
+      const lastUser = [...messages]
+        .reverse()
+        .find((m: { role: string }) => m.role === "user");
+      const key = (lastUser?.content ?? "").trim();
+      return new Response(cannedStream(SAMPLE_ANSWERS[key] ?? DEMO_FALLBACK), {
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
+
     const profileContext =
       profile.age !== "指定なし" || profile.propertyType !== "指定なし" || profile.area !== "指定なし"
         ? `\n\n【顧客プロファイル】年代：${profile.age} / 物件種別：${profile.propertyType} / エリア：${profile.area}`
@@ -66,7 +97,7 @@ export async function POST(req: NextRequest) {
 
     const systemWithProfile = SYSTEM_PROMPT + profileContext;
 
-    const stream = client.messages.stream({
+    const stream = getClient().messages.stream({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 1024,
       system: systemWithProfile,

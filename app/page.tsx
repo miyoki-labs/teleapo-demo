@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { DEMO_MODE } from "@/lib/demo";
 
 type CustomerProfile = {
   age: string;
@@ -107,9 +108,16 @@ export default function Home() {
             断り文句を入力すると、最適な切り返しトークを提案します
           </p>
         </div>
-        <span className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1 rounded-full font-medium">
-          引越しテレアポ特化
-        </span>
+        <div className="flex items-center gap-2">
+          {DEMO_MODE && (
+            <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 rounded-full font-medium">
+              公開デモ（回答は固定応答）
+            </span>
+          )}
+          <span className="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1 rounded-full font-medium">
+            引越しテレアポ特化
+          </span>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden max-w-5xl w-full mx-auto gap-0">
@@ -257,7 +265,9 @@ export default function Home() {
               </button>
             </div>
             <p className="text-xs text-gray-400 mt-2">
-              顧客プロファイルを設定するとより精度の高い切り返しが生成されます
+              {DEMO_MODE
+                ? "公開デモのため、回答は左の6つの断り文句への固定応答です（プロファイルは反映されません）"
+                : "顧客プロファイルを設定するとより精度の高い切り返しが生成されます"}
             </p>
           </div>
         </main>
