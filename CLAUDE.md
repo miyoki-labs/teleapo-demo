@@ -12,6 +12,6 @@
 ## 品質チェック（Miyoki共通）
 
 実装・修正の完了後は共通スキルを使う（正= `C:\Miyoki\.claude\skills\`）：
-- `/quality-check` … 変更種別から該当チェックを逆引き（UI3幅/フォーム/API/デプロイ後）
-- `/ux-review` … UX健全性の定期レビュー（汎用4軸＋固有軸）
+- `/pro qa` … 変更種別から該当チェックを逆引き（UI 4幅＝375/768/1280/1536・フォーム・API・デプロイ後。表＝`~/.claude/skills/pro/references/qa-web.md` §1-b。旧 `/quality-check` は 2026-09-08 に吸収）
+- `/ux-review` … UX健全性の定期レビュー（汎用4軸＋固有軸。グローバル＝この cwd から呼べる）
 - 薄い計画書＝ `C:\Miyoki\計画\プロジェクト別\` の同名md（目的/現在地/次の一手）
